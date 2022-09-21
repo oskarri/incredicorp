@@ -3,7 +3,7 @@ import { auth, db } from "./firebase"
 import { useAuthValue } from "./AuthContext"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { collection, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore"
+import { arrayUnion, collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
 import { isDisabled } from "@testing-library/user-event/dist/utils"
 const Profile = () => {
     const { currentUser } = useAuthValue()
@@ -51,10 +51,24 @@ const Profile = () => {
             const q = query(collection(db, "Users"), where("email", "==", memberName))
             const querySnapshot = await getDocs(q)
             if(querySnapshot.size===1) {
-                if(querySnapshot.docs[0].data().email == currentUser.data().email) {
+                if(querySnapshot.docs[0].data().email === currentUser.data().email) {
                     setError("Cannot add yourself!")
                 } else{
                     setError("Found it!")
+                    if(querySnapshot.docs[0].data().parent) {
+                        setError("User is already part of a team!")
+                    } else {
+                        console.log("got here")
+                        setError("User is not part of a team!")
+                        await updateDoc(doc(db, "Users", querySnapshot.docs[0].id), {
+                            parent: currentUser.data().parent
+                        })
+                        setError("updated User")
+                        await updateDoc(currentUser.data().parent, {
+                            Members: arrayUnion(doc(db, "Users", querySnapshot.docs[0].id))
+                        })
+                        setError("Finished adding")
+                    }
                 }
                 
 
