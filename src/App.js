@@ -63,7 +63,7 @@ function App() {
         return userDB
       }
       getUser().then((user) => {
-        setCurrentUser(user.data())
+        setCurrentUser(user)
       })
      }
      else {
@@ -80,7 +80,7 @@ function App() {
       <div className="flex flex-col h-screen">
         <header className="w-full h-12 bg-slate-700 text-white grow-0">
           <span className='text-left'>Be Work</span>
-          <span className='text-right'>{currentUser ? currentUser.email : "please login"}</span>
+          <span className='text-right'>{currentUser ? currentUser.data().email : "please login"}</span>
         </header>
         <div className='grow place-content-center'>
           <Router>
