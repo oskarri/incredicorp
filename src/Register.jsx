@@ -37,15 +37,16 @@ function Register() {
   }
 
   return (
-      <div className='auth flex flex-col gap-3 h-full'>
-        <h1>Register</h1>
+      <div className='auth flex flex-col gap-3 h-full justify-start'>
+        <h1 className='text-3xl font-semibold'>Register</h1>
         {error && <div className='auth__error'>{error}</div>}
-        <form onSubmit={register} name='registration_form' className='flex flex-col gap-2'>
+        <form onSubmit={register} name='registration_form' className='flex flex-col gap-2 mt-2'>
           <input 
             type='email' 
             value={email}
             placeholder="Enter your email"
             required
+            className='shadow appearance-none border rounded w-full my-2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             onChange={e => setEmail(e.target.value)}/>
 
           <input 
@@ -53,20 +54,14 @@ function Register() {
             value={password} 
             required
             placeholder='Enter your password'
+            className='shadow appearance-none border rounded w-full my-2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             onChange={e => setPassword(e.target.value)}/>
 
-            <input 
-            type='password'
-            value={confirmPassword} 
-            required
-            placeholder='Confirm password'
-            onChange={e => setConfirmPassword(e.target.value)}/>
-
-          <button type='submit'>Register</button>
+          <button type='submit' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>Register</button>
         </form>
-        <span>
+        <span className='text-sm'>
           Already have an account?  
-          <Link to='/login'>login</Link>
+          <Link to='/login' className=' ml-1 inline-block px-3 py-1 border-2 border-green-600 text-green-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>login</Link>
         </span>
       </div>
   )

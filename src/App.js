@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import {useEffect, useState} from "react"
+import { useEffect, useState } from "react"
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
@@ -14,6 +14,7 @@ import { auth, db } from './firebase';
 import { AuthProvider } from './AuthContext';
 import { onAuthStateChanged } from 'firebase/auth';
 import Profile from './Profile';
+import Posts from './Posts';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -30,9 +31,9 @@ import Profile from './Profile';
 
 function App() {
   const [user, setUser] = useState(null)
-  const [posts,setPosts] = useState([])
+  const [posts, setPosts] = useState([])
   useEffect(() => {
-    if(user) {
+    if (user) {
       console.log("email:", user.email)
       const q = query(collection(db, "Users"), where("email", "==", user.email));
       let userDB = null
@@ -56,19 +57,20 @@ function App() {
   }, [posts])
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if(user) {
-      const getUser = async () => {
-        console.log(user.uid)
-        const userDB = await getDoc(doc(db, 'Users', user.uid))
-        return userDB
+      if (user) {
+        const getUser = async () => {
+          console.log(user.uid)
+          const userDB = await getDoc(doc(db, 'Users', user.uid))
+          return userDB
+        }
+        getUser().then((user) => {
+          setCurrentUser(user)
+        })
       }
-      getUser().then((user) => {
-        setCurrentUser(user)
-      })
-     }
-     else {
-      setCurrentUser(null)
-     }})
+      else {
+        setCurrentUser(null)
+      }
+    })
   }, [])
 
   const [currentUser, setCurrentUser] = useState(null)
@@ -76,29 +78,34 @@ function App() {
     console.log(currentUser)
   }, [currentUser])
   return (
-    <AuthProvider value={{currentUser}}>
+    <AuthProvider value={{ currentUser }}>
       <div className="flex flex-col h-screen">
-        <header className="w-full h-12 bg-slate-700 text-white grow-0">
-          <span className='text-left'>Be Work</span>
-          <span className='text-right'>{currentUser ? currentUser.data().email : "please login"}</span>
+        <header className="w-full h-max bg-slate-700 text-white grow-0 flex flex-row justify-between items-center py-5 px-5">
+          <span className='font-semibold text-2xl'>BeWork</span>
+          <span className=''>{currentUser ? currentUser.data().email : "please login"}</span>
         </header>
-        <div className='grow place-content-center'>
-          <Router>
+        <div className='grow place-content-center flex flex-row justfiy-between'>
+          <div className=' h-max w-max my-24 p-4 rounded-md border-slate-300 border-2'>
+            <Router>
               <Routes>
-                <Route exact path='/' element={<Login/>}/>
+                <Route exact path='/' element={<Login />} />
                 <Route exact path='/register' element={
-                  !currentUser ? 
-                    <Register/>
-                    : <Navigate to='/success' replace/>
-                  }/>
+                  !currentUser ?
+                    <Register />
+                    : <Navigate to='/success' replace />
+                } />
+                <Route exact path='/posts' element={
+                  currentUser &&
+                    <Posts />
+                } />
                 <Route exact path='/login' element={
-                  !currentUser ? 
-                    <Login/>
-                    : <Navigate to='/success' replace/>
-                  }/>
-                <Route exact path='/success' element={<Profile/>}/>
+                    <Login />
+                } />
+                <Route exact path='/success' element={<Profile />} />
               </Routes>
-          </Router>
+            </Router>
+          </div>
+
         </div>
       </div >
     </AuthProvider>
