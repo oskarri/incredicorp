@@ -7,6 +7,7 @@ import { doc, setDoc } from 'firebase/firestore'
 function Register() {
 
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -22,7 +23,7 @@ function Register() {
         console.log("created user", user.user.uid)
         const createUser = async () => {
           await setDoc(doc(db, "Users", user.user.uid), {
-            name: "Placeholder",
+            name: name,
             email: user.user.email,
             role: 'member',
           })
@@ -48,7 +49,13 @@ function Register() {
             required
             className='shadow appearance-none border rounded w-full my-2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             onChange={e => setEmail(e.target.value)}/>
-
+          <input 
+            type='name' 
+            value={name}
+            placeholder="Enter your Name"
+            required
+            className='shadow appearance-none border rounded w-full my-2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            onChange={e => setName(e.target.value)}/>
           <input 
             type='password'
             value={password} 

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react"
 import { initializeApp } from "firebase/app";
 import { collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { signOut } from "firebase/auth"
 import Form from './form';
 import Login from './Login';
 import Register from './Register';
@@ -82,7 +82,20 @@ function App() {
       <div className="flex flex-col h-screen">
         <header className="w-full h-max bg-slate-700 text-white grow-0 flex flex-row justify-between items-center py-5 px-5">
           <span className='font-semibold text-2xl'>BeWork</span>
-          <span className=''>{currentUser ? currentUser.data().email : "please login"}</span>
+          <div>
+            {currentUser ? (
+              <div>
+                <span onClick={() => {
+                  signOut(auth)
+                }}
+                  className='ml-1 inline-block px-3 ml-16 py-1 border-2 border-red-600 text-red-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+                  Sign out
+                </span>
+                <span className=''>{currentUser ? currentUser.data().email : "please login"}</span>
+              </div>
+            ) : (<span>Please login</span>)}
+          </div>
+
         </header>
         <div className='grow place-content-center flex flex-row justfiy-between'>
           <div className=' h-max w-max my-24 p-4 rounded-md border-slate-300 border-2'>
@@ -96,10 +109,10 @@ function App() {
                 } />
                 <Route exact path='/posts' element={
                   currentUser &&
-                    <Posts />
+                  <Posts />
                 } />
                 <Route exact path='/login' element={
-                    <Login />
+                  <Login />
                 } />
                 <Route exact path='/success' element={<Profile />} />
               </Routes>
